@@ -5,4 +5,5 @@ jieba
 beautifulsoup
 nltk
 requests
+psycopg2
 -r api/requirements.txt

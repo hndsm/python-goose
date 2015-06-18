@@ -27,6 +27,7 @@ from goose.utils import StringSplitter
 from goose.utils import StringReplacement
 from goose.utils import ReplaceSequence
 from host_utils import HostUtils
+from goose.constant import _Const
 
 MOTLEY_REPLACEMENT = StringReplacement("&#65533;", "")
 ESCAPED_FRAGMENT_REPLACEMENT = StringReplacement(u"#!", u"?_escaped_fragment_=")
@@ -40,68 +41,10 @@ NO_STRINGS = set()
 A_REL_TAG_SELECTOR = "a[rel=tag]"
 A_HREF_TAG_SELECTOR = "a[href*='/tag/'], a[href*='/tags/'], a[href*='/topic/'], a[href*='?keyword=']"
 RE_LANG = r'^[A-Za-z]{2}$'
-KNOWN_PUBLISH_DATE_META_TAGS = [
-    {'attribute': 'property', 'value': 'rnews:datePublished'},
-    {'attribute': 'property', 'value': 'article:published_time'},
-    {'attribute': 'name', 'value': 'OriginalPublicationDate'},
-    {'attribute': 'itemprop', 'value': 'datePublished'},
-    {'attribute': 'property', 'value': 'article:published'},
-]
-KNOWN_DESCRIPTION_META_TAGS = [
-    {'attribute': 'name', 'value': 'description'},
-    {'attribute': 'property', 'value': 'og:description'},
-    {'attribute': 'property', 'value': 'rnews:description'},
-    {'attribute': 'name', 'value': 'Description'}
-]
-KNOWN_CONTENT_TAGS = [
-    {'attribute': 'id', 'value': 'story-body'},
-    {'attribute': 'itemprop', 'value': 'articleBody'},
-    {'attribute': 'id', 'value': 'mw-content-text'}, # wiki sites
-]
-
-KNOWN_HOST_CONTENT_TAGS = {
-    'www.ebay.com': '.vi-price, noscript [itemprop="image"], #vi-desc-maincntr, #Results, [itemprop="articleBody"]',
-    'deals.ebay.com': { 'reference': 'www.ebay.com' },
-    'www.ebay.co.uk': { 'reference': 'www.ebay.com' },
-    'www.goal.com': '[itemprop="articleBody"]',
-    'hk.apple.nextmedia.com': '.ArticleContent',
-    'www.linkedin.com': '.discussion-content, .description-module, .company-module',
-    'twitpic.com': '#media-main',
-    'www.twitpic.com': { 'reference': 'twitpic.com' },
-    '500px.com': '.the_photo, .description',
-    'designspiration.net': '#ImageModule .saveImage, #ImageModule .saveDescription, #ImageModule .accreditationLink',
-    'slickdeals.net': '#dealTextContainer, #dealTextContainer, .textDescription, .editorsNotes, [itemprop="description"]',
-    'ask.fm': '#profile-picture, .questionBox',
-    'stackoverflow.com': '#question .post-text, #question .owner .user-info, .accepted-answer .post-text, .accepted-answer .user-info',
-    'serverfault.com': { 'reference': 'stackoverflow.com' },
-    'superuser.com': { 'reference': 'stackoverflow.com' },
-    'askubuntu.com': { 'reference': 'stackoverflow.com' },
-    'stackapps.com': { 'reference': 'stackoverflow.com' },
-    'mathoverflow.net': { 'reference': 'stackoverflow.com' },
-    'regexs_references': {
-        'stackoverflow.com$|stackexchange.com$': { 'reference': 'stackoverflow.com' },
-    },
-    'github.com': '[itemprop="mainContentOfPage"], [itemtype="http://schema.org/Person"], .org-header-wrapper, .blog-post-body',
-    'timesofindia.indiatimes.com': '.storydiv .Normal',
-    'www.lomography.com': '.content article, .content .detail, .content .meta',
-    'www.businessinsider.com': '.post-content',
-    'www.etsy.com': '#listing-page-cart, #image-carousel img, #description, .avatar, #bio, #shop-announcement-overlay .overlay-body, #shop_banner, .primary.view .listing-card',
-    'www.mashreghnews.ir': '.news_body',
-    'itunes.apple.com': '.intro, [itemprop="description"], .product-review',
-    'www.yahoo.com': '.content',
-    'lesson-school.com': '.post-single-text',
-    'www.entrepreneur.com': '.article-body',
-    'www.lapatilla.com': '.entry-content',
-    'medium.com': '.postField',
-    'reporte.us': '.noticia',
-    'www.reporte.us': { 'reference': 'reporte.us' },
-    'www.npr.org': '.storylocation',
-    'blogs.wsj.com': '.post-content, #dMainContent',
-    'www.huffingtonpost.co.uk': '#mainentrycontent',
-    'www.huffingtonpost.com': { 'reference': 'www.huffingtonpost.co.uk' },
-    'route.newsactus.com': '.article .left-part p',
-}
-
+KNOWN_PUBLISH_DATE_META_TAGS = _Const().get_known_publish_date_meta_tags
+KNOWN_DESCRIPTION_META_TAGS = _Const().get_known_description_meta_tags
+KNOWN_CONTENT_TAGS = _Const().get_known_content_tags
+KNOWN_HOST_CONTENT_TAGS = _Const().get_known_host_content_tags
 
 class ContentExtractor(object):
 

@@ -26,42 +26,9 @@ from urlparse import urlsplit
 from goose.text import innerTrim
 from configuration import Configuration
 from host_utils import HostUtils
+from goose.constant import _Const
 
-KNOWN_HOST_REMOVE_SELECTORS = {
-    'www.ebay.com': '#desc_div, [class *= "drpdwn"], .dropdownmenu, #PaginationAndExpansionsContainer, #ConstraintCaptionContainer, .noImage div, .yesImage div, .yesImage img[src *= "://ir"], .yesVideo, [class ^= addCaption], .removeModalLayer',
-    'deals.ebay.com': { 'reference': 'www.ebay.com' },
-    'www.ebay.co.uk': { 'reference': 'www.ebay.com' },
-    'www.goal.com': '[href="http://www.adobe.com/go/getflashplayer"], .hidden',
-    'www.linkedin.com': '.item-actions',
-    'twitpic.com': '#media-stats, #media-comments',
-    'www.twitpic.com': { 'reference': 'twitpic.com' },
-    'slickdeals.net': '.buynow',
-    'ask.fm': '.likeCombo, .like-face-container, .time',
-    'stackoverflow.com': '[itemprop="answerCount"], .reputation-score, .badgecount, .relativetime',
-    'serverfault.com': { 'reference': 'stackoverflow.com' },
-    'superuser.com': { 'reference': 'stackoverflow.com' },
-    'askubuntu.com': { 'reference': 'stackoverflow.com' },
-    'stackapps.com': { 'reference': 'stackoverflow.com' },
-    'mathoverflow.net': { 'reference': 'stackoverflow.com' },
-    'regexs_references': {
-        'stackoverflow.com$|stackexchange.com$': { 'reference': 'stackoverflow.com' },
-    },
-    'github.com': '.hidden',
-    'timesofindia.indiatimes.com': '.hidden',
-    'www.lomography.com': 'header',
-    'www.businessinsider.com': '.popular-video, .see-also, .related-links-container',
-    'www.etsy.com': '[type="submit"]',
-    'www.mashreghnews.ir': '.hidden',
-    'itunes.apple.com': '.hidden',
-    'www.yahoo.com': '.hidden',
-    'www.entrepreneur.com': '.hidden',
-    'reporte.us': '.breadcrumb',
-    'www.reporte.us': { 'reference': 'reporte.us' },
-    'www.npr.org': '.internallink, [href ^= "javascript:"], .enlargebtn',
-    'blogs.wsj.com': '.socialByline, .linkBar, .pMetadataType-comments, .pMetadataType-button, #dShareTop',
-    'www.huffingtonpost.co.uk': '.hp-slideshow-wrapper',
-    'www.huffingtonpost.com': { 'reference': 'www.huffingtonpost.co.uk' },
-}
+KNOWN_HOST_REMOVE_SELECTORS = _Const().get_known_host_remove_selectors
 
 class OutputFormatterCleaner(clean.Cleaner):
     config = Configuration()
