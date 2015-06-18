@@ -89,7 +89,7 @@ class _Const(object):
 
     def get_connection_cursor(self):
         try:
-            connection_string = "host=%s dbname=%s user=%s password=%s" % (os.environ['DB_HOST'], os.environ['DB_NAME'], os.environ['DB_USER'], os.environ['DB_PASSWORD'])
+            connection_string = "host=%s dbname=%s user=%s password=%s port=%s" % (os.environ['DB_HOST'], os.environ['DB_NAME'], os.environ['DB_USER'], os.environ['DB_PASSWORD'], os.environ['DB_PORT'])
             conn = psycopg2.connect(connection_string)
             cursor = conn.cursor()
             return cursor
