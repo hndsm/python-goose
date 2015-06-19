@@ -41,10 +41,11 @@ NO_STRINGS = set()
 A_REL_TAG_SELECTOR = "a[rel=tag]"
 A_HREF_TAG_SELECTOR = "a[href*='/tag/'], a[href*='/tags/'], a[href*='/topic/'], a[href*='?keyword=']"
 RE_LANG = r'^[A-Za-z]{2}$'
-KNOWN_PUBLISH_DATE_META_TAGS = _Const().get_known_publish_date_meta_tags
-KNOWN_DESCRIPTION_META_TAGS = _Const().get_known_description_meta_tags
-KNOWN_CONTENT_TAGS = _Const().get_known_content_tags
-KNOWN_HOST_CONTENT_TAGS = _Const().get_known_host_content_tags
+# TODO: Uncomment and make changes in code if you want to read once from DB
+# KNOWN_PUBLISH_DATE_META_TAGS = _Const().get_known_publish_date_meta_tags
+# KNOWN_DESCRIPTION_META_TAGS = _Const().get_known_description_meta_tags
+# KNOWN_CONTENT_TAGS = _Const().get_known_content_tags
+# KNOWN_HOST_CONTENT_TAGS = _Const().get_known_host_content_tags
 
 class ContentExtractor(object):
 
@@ -124,7 +125,7 @@ class ContentExtractor(object):
         return TITLE_REPLACEMENTS.replaceAll(title).strip()
 
     def get_publish_date(self):
-        return self.get_from_known_meta_tags(KNOWN_PUBLISH_DATE_META_TAGS)
+        return self.get_from_known_meta_tags(_Const().get_known_publish_date_meta_tags)
 
     def get_from_known_meta_tags(self, known_meta_tags):
         for known_meta_tag in known_meta_tags:
@@ -190,7 +191,7 @@ class ContentExtractor(object):
         return ''
 
     def get_meta_description(self):
-        return self.get_from_known_meta_tags(KNOWN_DESCRIPTION_META_TAGS)
+        return self.get_from_known_meta_tags(_Const().get_known_description_meta_tags)
 
     def get_meta_keywords(self):
         """\
@@ -326,7 +327,7 @@ class ContentExtractor(object):
         return top_node
 
     def set_known_host_content_tags(self):
-        self.known_host_content_tags = HostUtils.host_selectors(KNOWN_HOST_CONTENT_TAGS,
+        self.known_host_content_tags = HostUtils.host_selectors(_Const().get_known_host_content_tags,
                                                                 self.article.domain)
 
     def get_top_host_node_from_known_tags(self):
@@ -337,7 +338,7 @@ class ContentExtractor(object):
             return self.parser.combine_nodes(content_tags)
 
     def get_top_node_from_known_tags(self):
-        for known_content_tag in KNOWN_CONTENT_TAGS:
+        for known_content_tag in _Const().get_known_content_tags:
             content_tags = self.parser.getElementsByTag(self.article.doc,
                                                         attr=known_content_tag['attribute'],
                                                         value=known_content_tag['value'])

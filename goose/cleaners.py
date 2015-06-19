@@ -27,8 +27,8 @@ from goose.text import innerTrim
 from configuration import Configuration
 from host_utils import HostUtils
 from goose.constant import _Const
-
-KNOWN_HOST_REMOVE_SELECTORS = _Const().get_known_host_remove_selectors
+# TODO: Uncomment and make changes in code if you want to read once from DB
+# KNOWN_HOST_REMOVE_SELECTORS = _Const().get_known_host_remove_selectors
 
 class OutputFormatterCleaner(clean.Cleaner):
     config = Configuration()
@@ -131,7 +131,7 @@ class DocumentCleaner(object):
                                             .append("^\\s+$")
 
     def set_known_host_remove_selectors(self):
-        self.known_host_remove_selectors = HostUtils.host_selectors(KNOWN_HOST_REMOVE_SELECTORS,
+        self.known_host_remove_selectors = HostUtils.host_selectors(_Const().get_known_host_remove_selectors,
                                                                     self.article.domain)
 
     def clean(self):
