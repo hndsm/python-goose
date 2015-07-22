@@ -1,4 +1,5 @@
 import os, sys, json, psycopg2
+from psycopg2.pool import ThreadedConnectionPool
 
 class _Const(object):
 
@@ -89,8 +90,8 @@ class _Const(object):
 
     def get_connection_cursor(self):
         try:
-            connection_string = "host=%s dbname=%s user=%s password=%s port=%s" % (os.environ['DB_HOST'], os.environ['DB_NAME'], os.environ['DB_USER'], os.environ['DB_PASSWORD'], os.environ['DB_PORT'])
-            conn = psycopg2.connect(connection_string)
+            pool = psycopg2.pool.ThreadedConnectionPool(1, os.environ['DB_POOL'], host=os.environ['DB_HOST'], database=os.environ['DB_NAME'], user=os.environ['DB_USER'], password=os.environ['DB_PASSWORD'], port=os.environ['DB_PORT'])
+            conn = pool.getconn()
             cursor = conn.cursor()
             return cursor
         except:
