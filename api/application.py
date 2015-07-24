@@ -7,6 +7,13 @@ from flask import render_template
 from decorators import authenticate
 from lib.goose_api import GooseAPI
 import json
+
+import goose.exceptions
+import traceback
+
+import logging
+from logging.handlers import RotatingFileHandler
+
 app = Flask(__name__)
 
 
@@ -21,8 +28,30 @@ def api():
 @app.route("/api/extract.json")
 @authenticate.requires_auth
 def extract():
-    extracted_content = GooseAPI(request.args.get('url')).extract()
-    return Response(json.dumps(extracted_content), mimetype='application/json')
+    try:
+        extracted_content = GooseAPI(request.args.get('url')).extract()
+        return Response(json.dumps(extracted_content), mimetype='application/json')
+    except goose.exceptions.NotAuthorizedError as error:
+        return Response(json.dumps({'success': False, 'error': str(error)}), mimetype='application/json', status= '401')
+    except goose.exceptions.ConnectionError as error:
+        return Response(json.dumps({'success': False, 'error': str(error)}), mimetype='application/json', status= '403')
+    except goose.exceptions.NotFoundError as error:
+        return Response(json.dumps({'success': False, 'error': 'Page not found'}), mimetype='application/json', status= '404')
+    except goose.exceptions.TimeoutError as error:
+        return Response(json.dumps({'success': False, 'error': str(error)}), mimetype='application/json', status= '408')
+    except goose.exceptions.UnexpectedRedirectError as error:
+        return Response(json.dumps({'success': False, 'error': str(error)}), mimetype='application/json', status= '307')
+    except goose.exceptions.TooManyRedirectsError as error:
+        return Response(json.dumps({'success': False, 'error': str(error)}), mimetype='application/json', status= '308')
+    except goose.exceptions.DatabaseError as error:
+        return Response(json.dumps({'success': False, 'error': 'Database error: ' + str(error)}), mimetype='application/json', status= '500')    
+    except goose.exceptions.UnknownError as error:
+        return Response(json.dumps({'success': False, 'error': 'Remote server Internal error'}), mimetype='application/json', status= '500')              
+    except Exception as error:
+    	print traceback.format_exc().splitlines()
+        return Response(json.dumps({'success': False, 'error': 'Goose Internal server error: ' + str(error)}), mimetype='application/json', status= '500')  
+
+    
 
 @app.route('/swagger')
 @authenticate.requires_auth
@@ -41,4 +70,7 @@ def documentation(name=None):
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    # handler = RotatingFileHandler('foo.log', maxBytes=10000, backupCount=1)
+    # handler.setLevel(logging.INFO)
+    # app.logger.addHandler(handler)
+    app.run(debug=True, use_reloader=True)

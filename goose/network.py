@@ -22,7 +22,7 @@ limitations under the License.
 """
 import urllib2
 import requests
-
+import goose.exceptions
 
 class HtmlFetcher(object):
 
@@ -40,20 +40,40 @@ class HtmlFetcher(object):
 
     def get_html(self, url):
         # utf-8 encode unicode url
+
         if isinstance(url, unicode):
             url = url.encode('utf-8')
 
-        # set request
-        self.request = urllib2.Request(url, headers = self.headers)
+        #we need this because it used somethere else
+        self.request = urllib2.Request(url, headers = self.headers)    
+
         # do request
         try:
-            self.result = urllib2.urlopen(self.request, timeout = self.config.http_timeout)
-            return self.result.read()
-        except urllib2.HTTPError as error:
-           # urllib2 can't handle "The New York Times", trying Requests lib
-           self.result = requests.get(url)
-           return self.result.text
-        except:
-            self.result = None
+            self.result = requests.get(url, headers = self.headers, timeout = self.config.http_timeout)
+        except requests.exceptions.ConnectionError as error:
+            raise goose.exceptions.ConnectionError(error)
+        except requests.exceptions.HTTPError as error:
+            raise goose.exceptions.UnknownError(error) 
+        except requests.exceptions.Timeout as error:
+            raise goose.exceptions.TimeoutError(error) 
+        except requests.exceptions.TooManyRedirects as error:
+            raise goose.exceptions.TooManyRedirectsError(error)
+        except Exception as error:
+            raise Ugoose.exceptions.UnknownError(error) 
 
-        return None
+        code = str(self.result.status_code)    
+
+        if code.startswith('2'):
+            return self.result.text
+        elif code.startswith('3'):
+            raise goose.exceptions.UnexpectedRedirectError(self.result.text)
+        elif code == '401':
+            raise goose.exceptions.NotAuthorizedError(self.result.text)
+        elif code == '404':
+            raise goose.exceptions.NotFoundError(self.result.text) 
+        elif code.startswith('5'):
+            raise goose.exceptions.UnknownError(self.result.text)
+
+        return None   
+
+        

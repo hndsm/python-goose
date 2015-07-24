@@ -11,6 +11,7 @@ class GooseAPI:
         self.extracted_content = None
 
     def extract(self):
+
         self.extracted_content = self.goose.extract(url = self.url)
         return {
             'title': self.extracted_content.title,

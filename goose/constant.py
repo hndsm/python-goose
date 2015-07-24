@@ -1,6 +1,8 @@
 import os, sys, json, psycopg2
 from psycopg2.pool import ThreadedConnectionPool
 
+import goose.exceptions
+
 class _Const(object):
 
     @apply
@@ -84,9 +86,12 @@ class _Const(object):
 
     def get_records_list_by_query(self, query_string):
         cursor = self.get_connection_cursor()
-        cursor.execute(query_string)
-        records_list = cursor.fetchall()
-        return records_list
+        try:
+            cursor.execute(query_string)
+            records_list = cursor.fetchall()
+            return records_list
+        except Exception as error:
+            raise goose.exceptions.DatabaseError(error)    
 
     def get_connection_cursor(self):
         try:
@@ -94,8 +99,8 @@ class _Const(object):
             conn = pool.getconn()
             cursor = conn.cursor()
             return cursor
-        except:
-            print "I am unable to connect to the database"
+        except Exception as error:
+            raise goose.exceptions.DatabaseError(error) 
 
     def get_domain_reference(self, list, reference_id):
         for item in list:
