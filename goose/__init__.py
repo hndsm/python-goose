@@ -28,6 +28,7 @@ from goose.version import version_info, __version__
 from goose.configuration import Configuration
 from goose.crawler import CrawlCandidate
 from goose.crawler import Crawler
+from goose.exceptions import *
 
 
 class Goose(object):
