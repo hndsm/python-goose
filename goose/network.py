@@ -64,7 +64,7 @@ class HtmlFetcher(object):
         code = str(self.result.status_code)    
 
         if code.startswith('2'):
-            return self.result.text
+            return self.result.text.encode('utf-8')
         elif code.startswith('3'):
             raise goose.exceptions.UnexpectedRedirectError(self.result.text)
         elif code == '401':
