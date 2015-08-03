@@ -31,6 +31,10 @@ def extract():
     try:
         extracted_content = GooseAPI(request.args.get('url')).extract()
         return Response(json.dumps(extracted_content), mimetype='application/json')
+    except goose.exceptions.SSLError as error:
+        return Response(json.dumps({'success': False, 'error': 'SSL error: ' + str(error)}), mimetype='application/json', status= '495')
+    except goose.exceptions.SSLDomainError as error:
+        return Response(json.dumps({'success': False, 'error': 'SSL domain error: ' + str(error)}), mimetype='application/json', status= '495')
     except goose.exceptions.NotAuthorizedError as error:
         return Response(json.dumps({'success': False, 'error': str(error)}), mimetype='application/json', status= '401')
     except goose.exceptions.ConnectionError as error:

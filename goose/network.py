@@ -50,6 +50,11 @@ class HtmlFetcher(object):
         # do request
         try:
             self.result = requests.get(url, headers = self.headers, timeout = self.config.http_timeout)
+        except requests.exceptions.SSLError as error:
+            if ('hostname' in str(error.args[0])) and ("doesn't match" in str(error.args[0])):
+                raise goose.exceptions.SSLDomainError(error)
+            else:
+                raise goose.exceptions.SSLError(error)
         except requests.exceptions.ConnectionError as error:
             raise goose.exceptions.ConnectionError(error)
         except requests.exceptions.HTTPError as error:
@@ -75,5 +80,3 @@ class HtmlFetcher(object):
             raise goose.exceptions.UnknownError(self.result.text)
 
         return None   
-
-        

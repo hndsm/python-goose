@@ -22,4 +22,10 @@ class UnexpectedRedirectError(Exception):
     pass
 
 class UnknownError(Exception):
-    pass                             
+    pass
+
+class SSLError(Exception):
+    pass
+
+class SSLDomainError(Exception):
+    pass
