@@ -14,8 +14,8 @@ class HostUtils(object):
                 selectors = all_selectors[selectors['reference']]
             return selectors
 
-        for regex_string in all_selectors['regexs_references']:
-            match_data = re.compile(regex_string).search(host)
-            if match_data:
-                reference_host = all_selectors['regexs_references'][regex_string]['reference']
-                return all_selectors[reference_host]
+        # for regex_string in all_selectors['regexs_references']:
+        #     match_data = re.compile(regex_string).search(host)
+        #     if match_data:
+        #         reference_host = all_selectors['regexs_references'][regex_string]['reference']
+        #         return all_selectors[reference_host]

@@ -19,7 +19,7 @@ class _Const(object):
                 if item[7]:
                     if item[6] != None : data[item[0]] = item[6]
                     if item[4] != None : data[item[0]] = {'reference' : self.get_domain_reference(records, item[4])}
-                    if item[3] != None : data['regexs_references'] = {item[3] : {'reference' : self.get_domain_reference(records, item[4])}}
+                    # if item[3] != None : data['regexs_references'] = {item[3] : {'reference' : self.get_domain_reference(records, item[4])}}
 
             return data
         return property(**locals())
@@ -38,7 +38,7 @@ class _Const(object):
                 if item[7]:
                     if item[5] != None : data[item[0]] = item[5]
                     if item[4] != None : data[item[0]] = {'reference' : self.get_domain_reference(records, item[4])}
-                    if item[3] != None : data['regexs_references'] = {item[3] : {'reference' : self.get_domain_reference(records, item[4])}}
+                    # if item[3] != None : data['regexs_references'] = {item[3] : {'reference' : self.get_domain_reference(records, item[4])}}
 
             return data
         return property(**locals())
