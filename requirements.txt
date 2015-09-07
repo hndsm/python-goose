@@ -6,4 +6,5 @@ beautifulsoup
 nltk
 requests
 psycopg2
+redis
 -r api/requirements.txt
