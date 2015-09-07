@@ -1,5 +1,6 @@
 import os, sys, json, psycopg2
 from psycopg2.pool import ThreadedConnectionPool
+from redis_cache import RedisCache
 
 import goose.exceptions
 
@@ -11,6 +12,10 @@ class _Const(object):
         def fset(self, value):
             raise SyntaxError
         def fget(self):
+            cached_rules = RedisCache.find_cached_value('goose_known_host_remove_selectors')
+            if cached_rules:
+                return cached_rules
+
             query_string = 'SELECT domains.url, goose_domain_settings.*, domains.url FROM goose_domain_settings INNER JOIN domains ON goose_domain_settings.domain_id=domains.id'
             records = self.get_records_list_by_query(query_string)
 
@@ -21,6 +26,7 @@ class _Const(object):
                     if item[4] != None : data[item[0]] = {'reference' : self.get_domain_reference(records, item[4])}
                     # if item[3] != None : data['regexs_references'] = {item[3] : {'reference' : self.get_domain_reference(records, item[4])}}
 
+            RedisCache.cache_value('goose_known_host_remove_selectors', data)
             return data
         return property(**locals())
 
@@ -30,6 +36,10 @@ class _Const(object):
         def fset(self, value):
             raise SyntaxError
         def fget(self):
+            cached_rules = RedisCache.find_cached_value('goose_known_host_content_tags')
+            if cached_rules:
+                return cached_rules           
+
             query_string = 'SELECT domains.url, goose_domain_settings.*, domains.url FROM goose_domain_settings INNER JOIN domains ON goose_domain_settings.domain_id=domains.id'
             records = self.get_records_list_by_query(query_string)
 
@@ -40,6 +50,7 @@ class _Const(object):
                     if item[4] != None : data[item[0]] = {'reference' : self.get_domain_reference(records, item[4])}
                     # if item[3] != None : data['regexs_references'] = {item[3] : {'reference' : self.get_domain_reference(records, item[4])}}
 
+            RedisCache.cache_value('goose_known_host_content_tags', data)
             return data
         return property(**locals())
 
@@ -74,6 +85,10 @@ class _Const(object):
         return property(**locals())
 
     def get_common_settings_list_by_name(self, name):
+        cached_rules = RedisCache.find_cached_value('goose_common_settings_list_' + name)
+        if cached_rules:
+            return cached_rules
+
         query_string = "SELECT * FROM goose_common_settings WHERE name='%s'" %(name)
         records = self.get_records_list_by_query(query_string)
 
@@ -82,6 +97,7 @@ class _Const(object):
             if item[4]:
                 common_settings_list.append({'attribute': item[2], 'value': item[3]})
 
+        RedisCache.cache_value('goose_common_settings_list_' + name, common_settings_list)
         return common_settings_list
 
     def get_records_list_by_query(self, query_string):

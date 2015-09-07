@@ -64,7 +64,7 @@ class HtmlFetcher(object):
         except requests.exceptions.TooManyRedirects as error:
             raise goose.exceptions.TooManyRedirectsError(error)
         except Exception as error:
-            raise Ugoose.exceptions.UnknownError(error) 
+            raise goose.exceptions.UnknownError(error) 
 
         code = str(self.result.status_code)    
 
