@@ -7,4 +7,5 @@ nltk
 requests
 psycopg2
 redis
+pyquery
 -r api/requirements.txt
