@@ -13,11 +13,25 @@
                         {
                           "name": "url",
                           "description": "The URL",
-                          "required": true,
+                          "required": false,
                           "type": "string",
                           "paramType": "query"
                         }
-
+                    ]
+                },
+                {
+                    "method": "POST",
+                    "notes": "Processes the RAW HTML and returns the extracted content",
+                    "type": "Link",
+                    "nickname": "extract",
+                    "parameters": [
+                        {
+                          "name": "raw_html",
+                          "description": "The RAW_HTML",
+                          "required": false,
+                          "type": "string",
+                          "paramType": "query"
+                        }
                     ]
                 }
             ]
