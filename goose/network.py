@@ -23,6 +23,8 @@ limitations under the License.
 import urllib2
 import requests
 import goose.exceptions
+from pyquery import PyQuery as pquery
+import cgi
 
 class HtmlFetcher(object):
 
@@ -50,6 +52,33 @@ class HtmlFetcher(object):
         # do request
         try:
             self.result = requests.get(url, headers = self.headers, timeout = self.config.http_timeout)
+            
+            #here is an workaround solution, hopes temporary =)
+            #not all sites respond with charset in HTTP header.
+            #in this case we want to try to find charset in HTML meta tags  
+            try:
+                _, params = cgi.parse_header(self.result.headers['Content-type'])
+
+                if not ('charset' in params):
+                    dom = pquery(self.result.content)
+                    if dom('meta[charset]').attr('charset'):
+                        #print 'User ch1 ' + dom('meta[charset]').attr('charset')
+                        self.result.encoding = dom('meta[charset]').attr('charset')
+
+                    elif dom('meta[http-equiv=content-type]').attr('content'):
+                        _, params = cgi.parse_header(dom('meta[http-equiv=content-type]').attr('content'))
+
+                        #print 'User ch2 ' + params['charset']
+                        self.result.encoding = params['charset']
+                    elif dom('meta[http-equiv=Content-type]').attr('content'):
+                        _, params = cgi.parse_header(dom('meta[http-equiv=Content-type]').attr('content'))
+                        #print 'User ch3 ' + params['charset']
+                        self.result.encoding = params['charset']
+            except Exception as error:
+                 #print str(error)
+                 'work as default when something goes wrong'            
+
+            #print self.result.text.encode('utf-8')
         except requests.exceptions.SSLError as error:
             if ('hostname' in str(error.args[0])) and ("doesn't match" in str(error.args[0])):
                 raise goose.exceptions.SSLDomainError(error)
@@ -69,7 +98,7 @@ class HtmlFetcher(object):
         code = str(self.result.status_code)    
 
         if code.startswith('2'):
-            return self.result.text.encode('utf-8')
+            return self.result.text#.encode('utf-8')
         elif code.startswith('3'):
             raise goose.exceptions.UnexpectedRedirectError(self.result.text)
         elif code == '401':
