@@ -25,11 +25,14 @@ def root():
 def api():
     pass # SwaggerUI helper URL
 
-@app.route("/api/extract.json")
+@app.route("/api/extract.json", methods=['GET', 'POST'])
 @authenticate.requires_auth
 def extract():
     try:
-        extracted_content = GooseAPI(request.args.get('url')).extract()
+        if request.method == 'POST' and request.headers['Content-Type'] == 'application/json':
+            extracted_content = GooseAPI(None, request.get_json().get('raw_html')).extract()
+        else:
+            extracted_content = GooseAPI(request.args.get('url'), request.args.get('raw_html')).extract()
         return Response(json.dumps(extracted_content), mimetype='application/json')
     except goose.exceptions.SSLError as error:
         return Response(json.dumps({'success': False, 'error': 'SSL error: ' + str(error)}), mimetype='application/json', status= '495')

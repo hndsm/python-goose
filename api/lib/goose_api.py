@@ -5,14 +5,26 @@ from goose import Goose
 
 
 class GooseAPI:
-    def __init__(self, url):
+    def __init__(self, url=None, raw_html=None):
         self.url = url
+        self.raw_html = raw_html
         self.goose = Goose()
         self.extracted_content = None
 
     def extract(self):
+        if self.url != None:
+            self.extracted_content = self.goose.extract(url=self.url)
+        elif self.raw_html != None:
+            self.extracted_content = self.goose.extract(raw_html=self.raw_html)
+        else:
+            return {
+                'title': '',
+                'summary': '',
+                'content': '',
+                'published_at': '',
+                'assets': []
+            }
 
-        self.extracted_content = self.goose.extract(url = self.url)
         return {
             'title': self.extracted_content.title,
             'summary': self.extracted_content.meta_description,
